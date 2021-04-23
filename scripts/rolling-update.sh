@@ -28,9 +28,9 @@ function run_and_pause_command {
 }
 
 function run_prod_load {
-  echo "docker run -i -t --name prod-load -e DURATION=300 -e NUM_USERS=10 -e REQUESTS_PER_SECOND=5 -d -e URL=http://pal-tracker-${UNIQUE_IDENTIFIER}.${DOMAIN}  pivotaleducation/loadtest"
+  echo "docker run -i -t --name prod-load -e DURATION=300 -e NUM_USERS=10 -e REQUESTS_PER_SECOND=5 -d -e URL=https://pal-tracker-review.apps.evans.pal.pivotal.io  pivotaleducation/loadtest"
   echo ""
-  docker run -i -t --name prod-load -e DURATION=300 -e NUM_USERS=10 -e REQUESTS_PER_SECOND=5 -d -e URL=http://pal-tracker-${UNIQUE_IDENTIFIER}.${DOMAIN}  pivotaleducation/loadtest
+  docker run -i -t --name prod-load -e DURATION=300 -e NUM_USERS=10 -e REQUESTS_PER_SECOND=5 -d -e URL=https://pal-tracker-review.apps.evans.pal.pivotal.io  pivotaleducation/loadtest
   echo ""
   echo ""
   echo "in a separate window, tail the load test logs by running 'docker logs prod-load -f"
@@ -45,9 +45,9 @@ function push_pal_tracker_v2 {
   echo ""
   cf set-env pal-tracker-v2 WELCOME_MESSAGE "Hello from the review environment v2"
 
-  echo "cf map-route pal-tracker-v2 ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}-v2"
+  echo "cf map-route pal-tracker-v2 apps.evans.pal.pivotal.io --hostname pal-tracker-review-v2"
   echo ""
-  cf map-route pal-tracker-v2 ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}-v2
+  cf map-route pal-tracker-v2 apps.evans.pal.pivotal.io --hostname pal-tracker-review-v2
 
   echo "cf start pal-tracker-v2"
   echo ""
@@ -55,15 +55,15 @@ function push_pal_tracker_v2 {
 }
 
 function v2_smoke_test {
-  echo "docker run -i -t --rm -e DURATION=30 -e NUM_USERS=1 -e REQUESTS_PER_SECOND=1 -e URL=http://pal-tracker-${UNIQUE_IDENTIFIER}-v2.${DOMAIN}  pivotaleducation/loadtest"
+  echo "docker run -i -t --rm -e DURATION=30 -e NUM_USERS=1 -e REQUESTS_PER_SECOND=1 -e URL=https://pal-tracker-review-v2.apps.evans.pal.pivotal.io  pivotaleducation/loadtest"
   echo ""
-  docker run -i -t --rm -e DURATION=30 -e NUM_USERS=1 -e REQUESTS_PER_SECOND=1 -e URL=http://pal-tracker-${UNIQUE_IDENTIFIER}-v2.${DOMAIN}  pivotaleducation/loadtest
+  docker run -i -t --rm -e DURATION=30 -e NUM_USERS=1 -e REQUESTS_PER_SECOND=1 -e URL=https://pal-tracker-review-v2.apps.evans.pal.pivotal.io  pivotaleducation/loadtest
 }
 
 function start_v2_merge {
-  echo "cf map-route pal-tracker-v2 ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}"
+  echo "cf map-route pal-tracker-v2 apps.evans.pal.pivotal.io --hostname pal-tracker-review"
   echo ""
-  cf map-route pal-tracker-v2 ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}
+  cf map-route pal-tracker-v2 apps.evans.pal.pivotal.io --hostname pal-tracker-review
 }
 
 function merge_traffic_to_v2 {
@@ -95,9 +95,9 @@ function switch_v2_to_prod {
   echo ""
   cf rename pal-tracker-v2 pal-tracker
 
-  echo "cf delete-route ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}-v2 -f"
+  echo "cf delete-route apps.evans.pal.pivotal.io --hostname pal-tracker-review-v2 -f"
   echo ""
-  cf delete-route ${DOMAIN} --hostname pal-tracker-${UNIQUE_IDENTIFIER}-v2 -f
+  cf delete-route apps.evans.pal.pivotal.io --hostname pal-tracker-review-v2 -f
 }
 
 function stop_prod_load {
